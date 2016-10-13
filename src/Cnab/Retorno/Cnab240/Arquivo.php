@@ -152,4 +152,13 @@ class Arquivo implements \Cnab\Retorno\IArquivo
     public function getCodigoConvenio() {
         return $this->header->getCodigoConvenio();
     }
+
+    /**
+     * Retorna o numero sequencial do arquivo
+     * @return Integer
+     */
+    public function getNumeroSequencialArquivo()
+    {
+        return $this->header->numero_sequencial_arquivo;
+    }
 }
