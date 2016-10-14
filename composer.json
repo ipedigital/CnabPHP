@@ -1,5 +1,5 @@
 {
-    "name": "nandodutra/cnab_php",
+    "name": "fmaraujo/cnabPHP",
     "type": "library",
     "description": "Projeto para criar arquivos de remessas e processar arquivos de retorno no formato CNAB",
     "keywords": ["boleto", "remessa", "retorno"],
@@ -12,6 +12,10 @@
         {
             "name": "Fernando Dutra Neres",
             "email": "fernando@inova2b.com.br"
+        },
+        {
+            "name": "Fernando Araujo",
+            "email": "fernando@ipe.digital"
         }
     ],
     "require-dev": {
@@ -20,7 +24,7 @@
         "codeclimate/php-test-reporter": "dev-master"
     },
     "require": {
-        "nandodutra/cnab_yaml":"dev-master",
+        "fmaraujo/cnabYAML":"dev-master",
         "php": ">=5.3.0",
         "mustangostang/spyc": "0.5.*"
     },

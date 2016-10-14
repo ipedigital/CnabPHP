@@ -8,7 +8,7 @@ class Factory
     public static function getCnabFormatPath() {
         if (self::$cnabFormatPath === null) {
             $optionA = dirname(__FILE__).'/../../../cnab_yaml';
-            $optionB = dirname(__FILE__).'/../../vendor/andersondanilo/cnab_yaml';
+            $optionB = dirname(__FILE__).'/../../vendor/fmaraujo/cnabYAML';
 
             if (file_exists($optionA)) {
                 self::setCnabFormatPath($optionA);
