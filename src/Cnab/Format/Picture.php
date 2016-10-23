@@ -60,8 +60,16 @@ class Picture
 				
 				if(!is_numeric($value))
 					throw new \Exception("value '$value' dont is a number, need format $format");
-					
-				$value = (string)(round($value, 2));
+
+                if (PHP_MAJOR_VERSION == 5) {
+                    if (is_float($value)) {
+                        $value = number_format($value,2,'.','');
+                    }
+                }
+                else {
+                    $value = (string)(round($value, 2));
+                }
+
 				$exp   = explode('.', $value);
 				if(!isset($exp[1]))
 					$exp[1] = 0;
