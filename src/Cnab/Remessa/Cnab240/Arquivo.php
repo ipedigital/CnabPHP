@@ -8,11 +8,11 @@ class Arquivo implements \Cnab\Remessa\IArquivo
     public  $detalhes = array();
     public  $trailerLote;
     public  $trailerArquivo;
-    
+
     private $_data_gravacao;
     private $_data_geracao;
     public  $banco;
-    public  $codigo_banco; 
+    public  $codigo_banco;
     public  $configuracao = array();
     public  $layoutVersao;
     const   QUEBRA_LINHA = "\r\n";
@@ -41,6 +41,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             'cidade',
             'uf',
             'cep',
+            'numero_sequencial_arquivo',
         );
 
         if($this->codigo_banco == \Cnab\Banco::CEF ||
@@ -52,7 +53,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $campos[] = 'codigo_cedente_dv';
             $campos[] = 'agencia_mais_cedente_dv';
             $campos[] = 'codigo_convenio';
-            $campos[] = 'numero_sequencial_arquivo';
         }
 
         if($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
@@ -64,7 +64,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $campos[] = 'conta';
             $campos[] = 'conta_dv';
             $campos[] = 'operacao';
-            $campos[] = 'numero_sequencial_arquivo';
         }
 
         if($this->codigo_banco == \Cnab\Banco::SICOOB)
@@ -74,16 +73,14 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $campos[] = 'codigo_cedente';
             $campos[] = 'codigo_cedente_dv';
             $campos[] = 'agencia_mais_cedente_dv';
-            $campos[] = 'numero_sequencial_arquivo';
         }
-        
+
         if($this->codigo_banco == \Cnab\Banco::BRADESCO)
         {
             $campos[] = 'agencia';
             $campos[] = 'agencia_dv';
             $campos[] = 'codigo_cedente';
             $campos[] = 'codigo_cedente_dv';
-            $campos[] = 'numero_sequencial_arquivo';
             $campos[] = 'codigo_convenio';
             $campos[] = 'agencia_mais_cedente_dv';
         }
@@ -99,7 +96,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             else
                 throw new \Exception('Configuração "'.$campo.'" need to be set');
         }
-            
+
         foreach($campos as $key)
         {
             if(!array_key_exists($key, $params))
@@ -133,7 +130,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $this->headerArquivo->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
             $this->headerArquivo->agencia_mais_cedente_dv = $this->configuracao['agencia_mais_cedente_dv'];
         }
-        
+
         if($this->codigo_banco == \Cnab\Banco::BRADESCO) {
             $this->headerArquivo->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
             $this->headerArquivo->codigo_convenio = $this->configuracao['codigo_convenio'];
@@ -231,7 +228,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $detalhe->segmento_p->agencia = $this->headerArquivo->agencia;
         $detalhe->segmento_p->agencia_dv = $this->headerArquivo->agencia_dv;
         $detalhe->segmento_p->codigo_cedente = $this->headerArquivo->codigo_cedente;
-        
+
         if($this->codigo_banco == \Cnab\Banco::SICOOB || $this->codigo_banco == \Cnab\Banco::BRADESCO) {
             $detalhe->segmento_p->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
             $detalhe->segmento_p->agencia_mais_cedente_dv = $this->configuracao['agencia_mais_cedente_dv'];
@@ -278,7 +275,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
 
         $detalhe->segmento_p->data_juros_mora = $dateVencimento;
         $detalhe->segmento_p->valor_juros_mora = $boleto['juros_de_um_dia'];
-        
+
         if($boleto['valor_desconto'] > 0) {
             $detalhe->segmento_p->codigo_desconto_1 = 1; // valor fixo
             $detalhe->segmento_p->data_desconto_1 = $boleto['data_desconto'];
@@ -288,7 +285,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $detalhe->segmento_p->data_desconto_1 = 0;
             $detalhe->segmento_p->valor_desconto_1 = 0;
         }
-        
+
         $detalhe->segmento_p->valor_abatimento = 0;
         $detalhe->segmento_p->uso_empresa = $boleto['numero_documento'];
         $detalhe->segmento_p->codigo_protesto = 3; // 3 = Não protestar
@@ -345,7 +342,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $detalhe->segmento_r->codigo_banco = $detalhe->segmento_p->codigo_banco;
         $detalhe->segmento_r->lote_servico = $detalhe->segmento_p->lote_servico;
         $detalhe->segmento_r->codigo_ocorrencia = $detalhe->segmento_p->codigo_ocorrencia;
-        
+
         if($boleto['valor_multa'] > 0) {
             $detalhe->segmento_r->codigo_multa = 2;
             $detalhe->segmento_r->valor_multa = $boleto['valor_multa'];
@@ -407,7 +404,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
     {
         return $this->detalhes;
     }
-    
+
     private function prepareText($text, $remove=null)
     {
         $result = strtoupper($this->removeAccents(trim(html_entity_decode($text))));;
@@ -420,19 +417,19 @@ class Arquivo implements \Cnab\Remessa\IArquivo
     {
         return preg_replace(
             array(
-                    '/\xc3[\x80-\x85]/',
-                    '/\xc3\x87/',
-                    '/\xc3[\x88-\x8b]/',
-                    '/\xc3[\x8c-\x8f]/',
-                    '/\xc3([\x92-\x96]|\x98)/',
-                    '/\xc3[\x99-\x9c]/',
+                '/\xc3[\x80-\x85]/',
+                '/\xc3\x87/',
+                '/\xc3[\x88-\x8b]/',
+                '/\xc3[\x8c-\x8f]/',
+                '/\xc3([\x92-\x96]|\x98)/',
+                '/\xc3[\x99-\x9c]/',
 
-                    '/\xc3[\xa0-\xa5]/',
-                    '/\xc3\xa7/',
-                    '/\xc3[\xa8-\xab]/',
-                    '/\xc3[\xac-\xaf]/',
-                    '/\xc3([\xb2-\xb6]|\xb8)/',
-                    '/\xc3[\xb9-\xbc]/',
+                '/\xc3[\xa0-\xa5]/',
+                '/\xc3\xa7/',
+                '/\xc3[\xa8-\xab]/',
+                '/\xc3[\xac-\xaf]/',
+                '/\xc3([\xb2-\xb6]|\xb8)/',
+                '/\xc3[\xb9-\xbc]/',
             ),
             str_split( 'ACEIOUaceiou' , 1 ),
             $this->isUtf8( $string ) ? $string : utf8_encode( $string )
@@ -451,7 +448,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
                 | [\xF1-\xF3][\x80-\xBF]{3}
                 | \xF4[\x80-\x8F][\x80-\xBF]{2}
                 )*$%xs',
-                $string
+            $string
         );
     }
 
@@ -476,7 +473,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $qtde_titulo_cobranca_simples++;
             $valor_total_titulo_simples += $detalhe->segmento_p->valor_titulo;
             foreach($detalhe->listSegmento() as $segmento) {
-                
+
                 $qtde_registro_lote++;
                 $segmento->numero_sequencial_lote = $numero_sequencial_lote++;
             }
@@ -488,15 +485,19 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $dados .= $detalhe->getEncoded() . self::QUEBRA_LINHA;
         }
         $this->trailerLote->qtde_registro_lote = $qtde_registro_lote;
-        
-        // $this->trailerLote->qtde_titulo_cobranca_simples = $qtde_titulo_cobranca_simples;
-        // $this->trailerLote->valor_total_titulo_simples = $valor_total_titulo_simples;
-        $this->trailerLote->qtde_titulo_cobranca_simples = 0;
-        $this->trailerLote->valor_total_titulo_simples = 0;
-        
-        $this->trailerLote->qtde_titulo_cobranca_vinculada = $qtde_titulo_cobranca_simples;
-        $this->trailerLote->valor_total_titulo_vinculada = $valor_total_titulo_simples;
-        
+
+        if ($this->codigo_banco == \Cnab\Banco::CEF) {
+            $this->trailerLote->qtde_titulo_cobranca_simples = $qtde_titulo_cobranca_simples;
+            $this->trailerLote->valor_total_titulo_simples = $valor_total_titulo_simples;
+        }
+        else {
+            $this->trailerLote->qtde_titulo_cobranca_simples = 0;
+            $this->trailerLote->valor_total_titulo_simples = 0;
+
+            $this->trailerLote->qtde_titulo_cobranca_vinculada = $qtde_titulo_cobranca_simples;
+            $this->trailerLote->valor_total_titulo_vinculada = $valor_total_titulo_simples;
+        }
+
         $this->trailerLote->qtde_titulo_cobranca_caucionada = 0;
         $this->trailerLote->valor_total_titulo_caucionada = 0;
         $this->trailerLote->qtde_titulo_cobranca_descontada = 0;
@@ -504,7 +505,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
 
         $this->trailerArquivo->qtde_lotes = 1;
         $this->trailerArquivo->qtde_registros = $this->trailerLote->qtde_registro_lote + 2;
-        
+
         if ($this->codigo_banco == \Cnab\Banco::SICOOB) {
             $this->trailerArquivo->qtde_contas_conciliacao = 1;
         }
@@ -527,7 +528,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
     }
 
     public function save($filename)
-    {        
+    {
         $text = $this->getText();
 
         file_put_contents($filename, $text);
