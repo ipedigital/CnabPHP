@@ -136,8 +136,8 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $this->headerArquivo->codigo_convenio = $this->configuracao['codigo_convenio'];
         }
 
-        $this->headerArquivo->nome_empresa = $this->configuracao['nome_fantasia'];
-        $this->headerArquivo->nome_banco = $banco['nome_do_banco'];
+        $this->headerArquivo->nome_empresa = $this->prepareText($this->configuracao['nome_fantasia']);
+        $this->headerArquivo->nome_banco = $this->prepareText($banco['nome_do_banco']);
         $this->headerArquivo->codigo_remessa_retorno = 1;
         $this->headerArquivo->data_geracao = $this->configuracao['data_geracao'];
         $this->headerArquivo->hora_geracao = $this->configuracao['data_geracao'];
