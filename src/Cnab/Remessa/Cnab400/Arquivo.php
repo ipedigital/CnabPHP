@@ -82,7 +82,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $this->header->conta_dv = $this->configuracao['conta_dac'];
         }
         
-        $this->header->nome_empresa = $this->configuracao['nome_fantasia'];
+        $this->header->nome_empresa = $this->prepareText($this->configuracao['nome_fantasia']);
         $this->header->data_geracao = $this->configuracao['data_geracao']->format('dmy');
     }
        
