@@ -228,7 +228,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         if (isset($boleto['sacado_cnpj'])) {
             $detalhe->segmento_q->sacado_codigo_inscricao = '2';
             $detalhe->segmento_q->sacado_numero_inscricao = $this->prepareText($boleto['sacado_cnpj'], '.-/');
-            $detalhe->segmento_q->nome = $this->prepareText($boleto['sacado_nome']);
+            $detalhe->segmento_q->nome = $this->prepareText($boleto['sacado_razao_social']);
         }
         else {
             $detalhe->segmento_q->sacado_codigo_inscricao = '1';
