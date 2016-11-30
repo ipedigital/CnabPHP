@@ -385,7 +385,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $this->trailerArquivo->qtde_registros = $this->trailerLote->qtde_registro_lote + 2;
 
         if ($this->codigo_banco == \Cnab\Banco::SICOOB) {
-            $this->trailerArquivo->qtde_contas_conciliacao = 1;
+            $this->trailerArquivo->qtde_contas_conciliacao = 0;
         }
 
         if (!$this->trailerLote->validate()) {
