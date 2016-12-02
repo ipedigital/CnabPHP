@@ -156,8 +156,8 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
 	 * Retorna o nosso número do boleto
 	 * @return String
 	 */
-	public function getNossoNumero()
-	{
+    public function getNossoNumero()
+    {
         $nossoNumero = $this->segmento_t->nosso_numero;
 
         if ($this->codigo_banco == 1) {
@@ -166,15 +166,32 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
                 '',
                 $nossoNumero
             );
-        }
-
-        if(in_array($this->codigo_banco, array(\Cnab\Banco::SANTANDER))) {
+        } elseif(in_array($this->codigo_banco, array(\Cnab\Banco::SANTANDER))) {
             // retira o dv
             $nossoNumero = substr($nossoNumero, 0, -1);
+        } elseif(in_array($this->codigo_banco, array(\Cnab\Banco::CEF))) {
+            if ($nossoNumero > 9999999) {
+                $nossoNumero = substr($nossoNumero,-7)+0;
+            }
+        } elseif(in_array($this->codigo_banco, array(\Cnab\Banco::SICOOB))) {
+            // retira o dv
+            //Nosso Número:
+            //- Se emissão a cargo do Sicoob (vide planilha ""Capa"" deste arquivo): Brancos
+            //- Se emissão a cargo do Beneficiário (vide planilha ""Capa"" deste arquivo):
+            //     NumTitulo - 10 posições (1 a 10)
+            //     Parcela - 02 posições (11 a 12) - ""01"" se parcela única
+            //     Modalidade - 02 posições (13 a 14) - vide planilha ""Capa"" deste arquivo
+            //     Tipo Formulário - 01 posição  (15 a 15):
+            //          ""1"" -auto-copiativo
+            //          ""3""-auto-envelopável
+            //          ""4""-A4 sem envelopamento
+            //          ""6""-A4 sem envelopamento 3 vias
+            //     Em branco - 05 posições (16 a 20)"
+            $nossoNumero = substr($nossoNumero, 0, -6);
         }
 
         return $nossoNumero;
-	}
+    }
 
 	/**
 	 * Retorna o objeto \DateTime da data de vencimento do boleto
