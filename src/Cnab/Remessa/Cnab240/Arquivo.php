@@ -371,7 +371,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $this->trailerLote->qtde_titulo_cobranca_vinculada = $qtde_titulo_cobranca_simples;
             $this->trailerLote->valor_total_titulo_vinculada = $valor_total_titulo_simples;
         }
-        else {
+        elseif (in_array($this->codigo_banco,[\Cnab\Banco::SICOOB])) {
             $this->trailerLote->qtde_titulo_cobranca_vinculada = 0;
             $this->trailerLote->valor_total_titulo_vinculada = 0;
         }
