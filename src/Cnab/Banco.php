@@ -11,11 +11,10 @@ class Banco
 
     public static function getBanco($codigo)
     {
-        if($codigo == self::BANCO_DO_BRASIL)
-        {
+        if ($codigo == self::BANCO_DO_BRASIL) {
             return array(
                 'codigo_do_banco' => self::BANCO_DO_BRASIL,
-                'nome_do_banco'   => 'BANCO DO BRASIL SA',
+                'nome_do_banco' => 'BANCO DO BRASIL S.A.',
             );
         } else if($codigo == self::ITAU)
         {

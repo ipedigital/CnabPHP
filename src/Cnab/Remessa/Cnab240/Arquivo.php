@@ -29,12 +29,25 @@ class Arquivo implements \Cnab\Remessa\IArquivo
     {
         $banco = \Cnab\Banco::getBanco($this->codigo_banco);
         $campos = [
-            'data_geracao', 'data_gravacao', 'nome_fantasia', 'razao_social', 'tipo_inscricao', 'cpf_cnpj', 'logradouro', 'numero', 'bairro', 'cidade', 'uf', 'cep',
+            'data_geracao',
+            'data_gravacao',
+            'nome_fantasia',
+            'razao_social',
+            'tipo_inscricao',
+            'cpf_cnpj',
+            'logradouro',
+            'numero',
+            'bairro',
+            'cidade',
+            'uf',
+            'cep',
         ];
 
-        if ($this->codigo_banco == \Cnab\Banco::CEF || $this->codigo_banco == \Cnab\Banco::BRADESCO) {
+        if ($this->codigo_banco == \Cnab\Banco::CEF) {
             $campos[] = 'agencia';
             $campos[] = 'agencia_dv';
+            $campos[] = 'conta';
+            $campos[] = 'operacao';
             $campos[] = 'codigo_cedente';
             $campos[] = 'codigo_cedente_dv';
             $campos[] = 'agencia_mais_cedente_dv';
@@ -56,9 +69,21 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $campos[] = 'agencia_dv';
             $campos[] = 'codigo_cedente';
             $campos[] = 'codigo_cedente_dv';
-            $campos[] = 'numero_sequencial_arquivo';
-            $campos[] = 'codigo_convenio';
             $campos[] = 'agencia_mais_cedente_dv';
+            $campos[] = 'codigo_convenio';
+            $campos[] = 'numero_sequencial_arquivo';
+        }
+
+        if ($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
+            $campos[] = 'agencia';
+            $campos[] = 'agencia_dv';
+            $campos[] = 'conta';
+            $campos[] = 'conta_dv';
+            $campos[] = 'operacao';
+            $campos[] = 'codigo_convenio';
+            $campos[] = 'codigo_carteira';
+            $campos[] = 'variacao_carteira';
+            $campos[] = 'numero_sequencial_arquivo';
         }
 
         foreach ($campos as $campo) {
@@ -92,16 +117,30 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $this->headerArquivo->numero_inscricao = $this->prepareText($this->configuracao['cpf_cnpj'], '.-/');
         $this->headerArquivo->agencia = $this->configuracao['agencia'];
         $this->headerArquivo->agencia_dv = $this->configuracao['agencia_dv'];
-        $this->headerArquivo->codigo_cedente = $this->configuracao['codigo_cedente'];
+
+        if($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
+            $this->headerArquivo->codigo_convenio = $this->configuracao['codigo_convenio'];
+            $this->headerArquivo->carteira = $this->configuracao['codigo_carteira'];
+            $this->headerArquivo->variacao_carteira = $this->configuracao['variacao_carteira'];
+            $this->headerArquivo->conta = $this->configuracao['conta'];
+            $this->headerArquivo->conta_dv = $this->configuracao['conta_dv'];
+        }
 
         if ($this->codigo_banco == \Cnab\Banco::SICOOB) {
+            $this->headerArquivo->codigo_cedente = $this->configuracao['codigo_cedente'];
             $this->headerArquivo->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
             $this->headerArquivo->agencia_mais_cedente_dv = $this->configuracao['agencia_mais_cedente_dv'];
         }
 
         if ($this->codigo_banco == \Cnab\Banco::BRADESCO) {
+            $this->headerArquivo->codigo_cedente = $this->configuracao['codigo_cedente'];
             $this->headerArquivo->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
             $this->headerArquivo->codigo_convenio = $this->configuracao['codigo_convenio'];
+        }
+
+        if ($this->codigo_banco == \Cnab\Banco::CEF) {
+            $this->headerArquivo->codigo_cedente = $this->configuracao['codigo_cedente'];
+            $this->headerArquivo->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
         }
 
         $this->headerArquivo->nome_empresa = $this->prepareText($this->configuracao['nome_fantasia']);
@@ -140,6 +179,14 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $this->headerLote->tipo_servico = 2;
         }
 
+        if ($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
+            $this->headerLote->codigo_convenio = $this->headerArquivo->codigo_convenio;
+            $this->headerLote->carteira = $this->headerArquivo->carteira;
+            $this->headerLote->variacao_carteira = $this->headerArquivo->variacao_carteira;
+            $this->headerLote->conta = $this->headerArquivo->conta;
+            $this->headerLote->conta_dv = $this->headerArquivo->conta_dv;
+        }
+
         $this->trailerLote->codigo_banco = $this->headerArquivo->codigo_banco;
         $this->trailerLote->lote_servico = $this->headerLote->lote_servico;
 
@@ -158,22 +205,39 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $detalhe->segmento_p->lote_servico = $this->headerLote->lote_servico;
         $detalhe->segmento_p->agencia = $this->headerArquivo->agencia;
         $detalhe->segmento_p->agencia_dv = $this->headerArquivo->agencia_dv;
-        $detalhe->segmento_p->codigo_cedente = $this->headerArquivo->codigo_cedente;
 
         if ($this->codigo_banco == \Cnab\Banco::SICOOB || $this->codigo_banco == \Cnab\Banco::BRADESCO) {
+            $detalhe->segmento_p->codigo_cedente = $this->headerArquivo->codigo_cedente;
             $detalhe->segmento_p->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
             $detalhe->segmento_p->agencia_mais_cedente_dv = $this->configuracao['agencia_mais_cedente_dv'];
         }
 
         if ($this->codigo_banco == \Cnab\Banco::BRADESCO) {
+            $detalhe->segmento_p->codigo_cedente = $this->headerArquivo->codigo_cedente;
             $detalhe->segmento_p->modalidade_carteira = $boleto['modalidade_carteira'];
         }
 
-        $detalhe->segmento_p->nosso_numero = $boleto['nosso_numero'];
+        if ($this->codigo_banco == \Cnab\Banco::CEF) {
+            $detalhe->segmento_p->codigo_cedente = $this->headerArquivo->codigo_cedente;
+            $detalhe->segmento_p->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
+        }
 
-        if ($this->codigo_banco == \Cnab\Banco::SICOOB) {
-            $detalhe->segmento_p->nosso_numero = str_pad($boleto['nosso_numero'], 10, '0',
-                    STR_PAD_LEFT) . '' . str_pad($boleto['parcela'], 2, '0', STR_PAD_LEFT) . '013     ';
+        if ($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
+            $detalhe->segmento_p->conta = $this->headerArquivo->conta;
+            $detalhe->segmento_p->conta_dv = $this->headerArquivo->conta_dv;
+        }
+
+        $detalhe->segmento_p->nosso_numero = $this->formatarNossoNumero($boleto['nosso_numero']);
+
+        if($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
+            // Informar 1 – para carteira 11/12 na modalidade Simples; 2 ou 3 – para carteira 11/17 modalidade
+            // Vinculada/Caucionada e carteira 31; 4 – para carteira 11/17 modalidade Descontada e carteira 51; e 7 – para
+            // carteira 17 modalidade Simples.
+            if($boleto['carteira'] == 17 && $boleto['codigo_carteira'] == \Cnab\CodigoCarteira::COBRANCA_SIMPLES) {
+                $detalhe->segmento_p->codigo_carteira = 7;
+            } else {
+                $detalhe->segmento_p->codigo_carteira = $boleto['codigo_carteira'];
+            }
         }
 
         $detalhe->segmento_p->codigo_carteira = 1; // 1 = Cobrança Simples
@@ -215,8 +279,19 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $detalhe->segmento_p->uso_empresa = $boleto['numero_documento'];
         $detalhe->segmento_p->codigo_protesto = 3; // 3 = Não protestar
         $detalhe->segmento_p->prazo_protesto = 0;
-        $detalhe->segmento_p->codigo_baixa = $boleto['codigo_baixa'] ?? 1; // Baixar
-        $detalhe->segmento_p->prazo_baixa = $boleto['prazo_baixa'] ?? 30; // Baixar automaticamente após 30 dias
+
+        if ($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
+            // Campo não tratado pelo sistema. Informar 'zeros'.
+            // O sistema considera a informação que foi cadastrada na
+            // sua carteira junto ao Banco do Brasil.
+            $detalhe->segmento_p->codigo_baixa = 0;
+            $detalhe->segmento_p->prazo_baixa = 0;
+        }
+        else {
+            $detalhe->segmento_p->codigo_baixa = $boleto['codigo_baixa'] ?? 2; // Verifica se foi enviado informação de baixa, caso não seja, não baixar automaticamente
+            $detalhe->segmento_p->prazo_baixa = $boleto['prazo_baixa'] ?? 0; //
+        }
+
 
         $detalhe->segmento_p->codigo_ocorrencia = $boleto['codigo_ocorrencia'];
 
@@ -270,6 +345,51 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         }
 
         $this->detalhes[] = $detalhe;
+    }
+
+    public function formatarNossoNumero($boleto)
+    {
+        if(!$boleto)
+            return '';
+
+        $nossoNumero = $boleto['nosso_numero'];
+
+        if ($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
+            $codigo_convenio = $this->configuracao['codigo_convenio'];
+            if(strlen($codigo_convenio) <= 4) {
+                # Convênio de 4 digitos
+                if(strlen($nossoNumero) > 7) {
+                    throw new \InvalidArgumentException(
+                        "Para número de convênio de 4 posições o nosso número deve ter no máximo 7 posições (sem o digito)"
+                    );
+                }
+                $number = sprintf('%04d%07d', $codigo_convenio, $nossoNumero);
+                return $number . $this->mod11($number);
+            } elseif (strlen($codigo_convenio) <= 6) {
+                # Convênio de 6 digitos
+                if(strlen($nossoNumero) > 5) {
+                    throw new \InvalidArgumentException(
+                        "Para número de convênio de 6 posições o nosso número deve ter no máximo 5 posições (sem o digito)"
+                    );
+                }
+                $number = sprintf('%06d%05d', $codigo_convenio, $nossoNumero);
+                return $number . $this->mod11($number);
+            } else {
+                if(strlen($nossoNumero) > 10) {
+                    throw new \InvalidArgumentException(
+                        "Para número de convênio de 7 posições o nosso número deve ter no máximo 10 posições"
+                    );
+                }
+                $number = sprintf('%07d%010d', $codigo_convenio, $nossoNumero);
+                return $number;
+            }
+        }
+        elseif ($this->codigo_banco == \Cnab\Banco::SICOOB) {
+            $nossoNumero = str_pad($nossoNumero, 10, '0',
+                    STR_PAD_LEFT) . '' . str_pad($boleto['parcela'], 2, '0', STR_PAD_LEFT) . '013     ';
+        }
+
+        return $nossoNumero;
     }
 
     public function listDetalhes()
