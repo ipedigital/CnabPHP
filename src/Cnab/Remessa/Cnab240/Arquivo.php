@@ -224,7 +224,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $detalhe->segmento_p->conta_dv = $this->headerArquivo->conta_dv;
         }
 
-        $detalhe->segmento_p->nosso_numero = $this->formatarNossoNumero($boleto['nosso_numero']);
+        $detalhe->segmento_p->nosso_numero = $this->formatarNossoNumero($boleto);
 
         if($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
             // Informar 1 – para carteira 11/12 na modalidade Simples; 2 ou 3 – para carteira 11/17 modalidade
