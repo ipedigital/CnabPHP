@@ -489,10 +489,14 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         if ($this->codigo_banco != \Cnab\Banco::BANCO_DO_BRASIL) {
             $this->trailerLote->qtde_titulo_cobranca_simples = 0;
             $this->trailerLote->valor_total_titulo_simples = 0;
+
+            $this->trailerLote->qtde_titulo_cobranca_caucionada = 0;
+            $this->trailerLote->valor_total_titulo_caucionada = 0;
+            $this->trailerLote->qtde_titulo_cobranca_descontada = 0;
+            $this->trailerLote->valor_total_titulo_descontada = 0;
         }
 
-
-        if (!in_array($this->codigo_banco,[\Cnab\Banco::CEF, \Cnab\Banco::SICOOB])) {
+        if (!in_array($this->codigo_banco,[\Cnab\Banco::CEF, \Cnab\Banco::SICOOB, \Cnab\Banco::BANCO_DO_BRASIL])) {
             $this->trailerLote->qtde_titulo_cobranca_vinculada = $qtde_titulo_cobranca_simples;
             $this->trailerLote->valor_total_titulo_vinculada = $valor_total_titulo_simples;
         }
@@ -501,10 +505,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $this->trailerLote->valor_total_titulo_vinculada = 0;
         }
 
-        $this->trailerLote->qtde_titulo_cobranca_caucionada = 0;
-        $this->trailerLote->valor_total_titulo_caucionada = 0;
-        $this->trailerLote->qtde_titulo_cobranca_descontada = 0;
-        $this->trailerLote->valor_total_titulo_descontada = 0;
 
         $this->trailerArquivo->qtde_lotes = 1;
         $this->trailerArquivo->qtde_registros = $this->trailerLote->qtde_registro_lote + 2;
