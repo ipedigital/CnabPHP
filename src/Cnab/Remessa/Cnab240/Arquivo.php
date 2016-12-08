@@ -155,7 +155,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $this->headerLote->numero_inscricao = $this->headerArquivo->numero_inscricao;
         $this->headerLote->agencia = $this->headerArquivo->agencia;
         $this->headerLote->agencia_dv = $this->headerArquivo->agencia_dv;
-        $this->headerLote->codigo_convenio = $this->headerArquivo->codigo_cedente;
         $this->headerLote->codigo_cedente = $this->headerArquivo->codigo_cedente;
 
         if ($this->codigo_banco == \Cnab\Banco::SICOOB) {
@@ -168,6 +167,10 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $this->headerLote->codigo_convenio = $this->configuracao['codigo_convenio'];
             $this->headerLote->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
             $this->headerLote->agencia_mais_cedente_dv = '';
+        }
+
+        if ($this->codigo_banco == \Cnab\Banco::CEF) {
+            $this->headerLote->codigo_convenio = $this->headerArquivo->codigo_cedente;
         }
 
         $this->headerLote->nome_empresa = $this->headerArquivo->nome_empresa;
