@@ -486,8 +486,11 @@ class Arquivo implements \Cnab\Remessa\IArquivo
 
         // $this->trailerLote->qtde_titulo_cobranca_simples = $qtde_titulo_cobranca_simples;
         // $this->trailerLote->valor_total_titulo_simples = $valor_total_titulo_simples;
-        $this->trailerLote->qtde_titulo_cobranca_simples = 0;
-        $this->trailerLote->valor_total_titulo_simples = 0;
+        if ($this->codigo_banco != \Cnab\Banco::BANCO_DO_BRASIL) {
+            $this->trailerLote->qtde_titulo_cobranca_simples = 0;
+            $this->trailerLote->valor_total_titulo_simples = 0;
+        }
+
 
         if (!in_array($this->codigo_banco,[\Cnab\Banco::CEF, \Cnab\Banco::SICOOB])) {
             $this->trailerLote->qtde_titulo_cobranca_vinculada = $qtde_titulo_cobranca_simples;
