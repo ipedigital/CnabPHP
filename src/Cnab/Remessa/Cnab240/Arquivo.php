@@ -49,7 +49,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $campos[] = 'conta';
             $campos[] = 'operacao';
             $campos[] = 'codigo_cedente';
-            $campos[] = 'codigo_cedente_dv';
             $campos[] = 'agencia_mais_cedente_dv';
             $campos[] = 'codigo_convenio';
             $campos[] = 'numero_sequencial_arquivo';
@@ -140,7 +139,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
 
         if ($this->codigo_banco == \Cnab\Banco::CEF) {
             $this->headerArquivo->codigo_cedente = $this->configuracao['codigo_cedente'];
-            $this->headerArquivo->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
         }
 
         $this->headerArquivo->nome_empresa = $this->prepareText($this->configuracao['nome_fantasia']);
@@ -219,7 +217,6 @@ class Arquivo implements \Cnab\Remessa\IArquivo
 
         if ($this->codigo_banco == \Cnab\Banco::CEF) {
             $detalhe->segmento_p->codigo_cedente = $this->headerArquivo->codigo_cedente;
-            $detalhe->segmento_p->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
         }
 
         if ($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
