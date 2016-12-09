@@ -29,14 +29,19 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             'cidade', 'uf', 'cep',
         );
 
-        if($this->codigo_banco == \Cnab\Banco::CEF)
-        {
+        if($this->codigo_banco == \Cnab\Banco::CEF) {
             //$campos[] = 'codigo_cedente';
             $campos[] = 'agencia';
             $campos[] = 'conta';
             $campos[] = 'operacao';
             $campos[] = 'codigo_cedente';
             $campos[] = 'codigo_cedente_dac';
+        }
+        elseif ($this->codigo_banco == \Cnab\Banco::BRADESCO) {
+            $campos[] = 'agencia';
+            $campos[] = 'conta';
+            $campos[] = 'codigo_cedente';
+            $campos[] = 'sequencial_remessa';
         }
         else
         {
@@ -71,14 +76,20 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $this->header->codigo_banco = $this->banco['codigo_do_banco'];
         $this->header->nome_banco = $this->banco['nome_do_banco'];
 
+        $this->header->agencia = $this->configuracao['agencia'];
+        $this->header->conta = $this->configuracao['conta'];
+
         if($this->codigo_banco == \Cnab\Banco::CEF)
         {
             $this->header->codigo_cedente = $this->configuracao['codigo_cedente'];
         }
+        elseif($this->codigo_banco == \Cnab\Banco::BRADESCO) {
+            $this->header->codigo_cedente = $this->configuracao['codigo_cedente'];
+            $this->header->sequencial_remessa = $this->configuracao['sequencial_remessa'];
+            $this->header->razao_social = $this->prepareText($this->configuracao['razao_social']);
+        }
         else
         {
-            $this->header->agencia = $this->configuracao['agencia'];
-            $this->header->conta = $this->configuracao['conta'];
             $this->header->conta_dv = $this->configuracao['conta_dac'];
         }
         
@@ -109,6 +120,10 @@ class Arquivo implements \Cnab\Remessa\IArquivo
                 $detalhe->data_multa = $boleto['data_multa'];
                 $detalhe->valor_multa = $boleto['valor_multa'];
                 
+            }
+            elseif(\Cnab\Banco::BRADESCO == $this->codigo_banco) {
+                $detalhe->codigo_cedente = $this->header->codigo_cedente;
+                $detalhe->digito_nosso_numero = $boleto['digito_nosso_numero'];
             }
             else
             {
