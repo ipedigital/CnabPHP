@@ -290,8 +290,8 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $detalhe->segmento_p->prazo_baixa = 0;
         }
         else {
-            $detalhe->segmento_p->codigo_baixa = $boleto['codigo_baixa'] ? $boleto['codigo_baixa'] : 2; // Verifica se foi enviado informação de baixa, caso não seja, não baixar automaticamente
-            $detalhe->segmento_p->prazo_baixa = $boleto['prazo_baixa'] ? $boleto['prazo_baixa'] : 0; //
+            $detalhe->segmento_p->codigo_baixa = isset($boleto['codigo_baixa']) ? $boleto['codigo_baixa'] : 2; // Verifica se foi enviado informação de baixa, caso não seja, não baixar automaticamente
+            $detalhe->segmento_p->prazo_baixa = isset($boleto['prazo_baixa']) ? $boleto['prazo_baixa'] : 0; //
         }
 
 
