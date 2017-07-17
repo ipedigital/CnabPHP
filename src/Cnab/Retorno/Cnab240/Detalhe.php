@@ -20,15 +20,25 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
 	 * Retorno se é para dar baixa no boleto
 	 * @return Boolean
 	 */
-	public function isBaixa()
+	public function isBaixa($forcadaBanco = false)
     {
         $codigo_movimento = $this->segmento_t->codigo_movimento;
-	    return self::isBaixaStatic($codigo_movimento);
+	    return self::isBaixaStatic($codigo_movimento, $forcadaBanco);
 	}
 
-	public static function isBaixaStatic($codigo_movimento)
+	public static function isBaixaStatic($codigo_movimento, $forcadaBanco = false)
 	{
-		$tipo_baixa = array(6, 9, 17, 25);
+	    if( $forcadaBanco ){
+//            17 => 'Liquidação Após Baixa ou Liquidação Título Não Registrado'
+//            25 => 'Protestado e Baixado (Baixa por Ter Sido Protestado)'
+            $tipo_baixa = array(17, 25);
+        }
+        else{
+//            6 => 'Liquidação'
+//            9 => 'Baixa'
+            $tipo_baixa = array(6, 9);
+        }
+
 		$codigo_movimento = (int)$codigo_movimento;
 		if(in_array($codigo_movimento, $tipo_baixa))
 			return true;
