@@ -29,14 +29,14 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
 	public static function isBaixaStatic($codigo_movimento, $forcadaBanco = false)
 	{
 	    if( $forcadaBanco ){
-//            17 => 'Liquidação Após Baixa ou Liquidação Título Não Registrado'
+//            9  => 'Baixa'
 //            25 => 'Protestado e Baixado (Baixa por Ter Sido Protestado)'
-            $tipo_baixa = array(17, 25);
+            $tipo_baixa = array(9, 25);
         }
         else{
-//            6 => 'Liquidação'
-//            9 => 'Baixa'
-            $tipo_baixa = array(6, 9);
+//            6  => 'Liquidação'
+//            17 => 'Liquidação Após Baixa ou Liquidação Título Não Registrado'
+            $tipo_baixa = array(6, 17);
         }
 
 		$codigo_movimento = (int)$codigo_movimento;
