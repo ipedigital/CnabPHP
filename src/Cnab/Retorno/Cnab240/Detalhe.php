@@ -181,7 +181,7 @@ class Detalhe extends \Cnab\Format\Linha implements \Cnab\Retorno\IDetalhe
             $nossoNumero = substr($nossoNumero, 0, -1);
         } elseif(in_array($this->codigo_banco, array(\Cnab\Banco::CEF))) {
             if ($nossoNumero > 9999999) {
-                $nossoNumero = substr($nossoNumero,-7)+0;
+                $nossoNumero = substr($nossoNumero,-15)+0;
             }
         } elseif(in_array($this->codigo_banco, array(\Cnab\Banco::SICOOB))) {
             // retira o dv
