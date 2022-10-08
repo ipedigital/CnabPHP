@@ -200,6 +200,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
     {
         $dateVencimento = $boleto['data_vencimento'] instanceof \DateTime ? $boleto['data_vencimento'] : new \DateTime($boleto['data_vencimento']);
         $dateCadastro = $boleto['data_cadastro'] instanceof \DateTime ? $boleto['data_cadastro'] : new \DateTime($boleto['data_cadastro']);
+        $dateJurosMora = $boleto['data_juros_mora'] instanceof \DateTime ? $boleto['data_juros_mora'] : new \DateTime($boleto['data_juros_mora']);
 
         $detalhe = new Detalhe($this);
 
@@ -264,7 +265,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $detalhe->segmento_p->aceite = $boleto['aceite'];
         $detalhe->segmento_p->data_emissao = $dateCadastro;
         $detalhe->segmento_p->codigo_juros_mora = $boleto['codigo_juros_mora']; // 1 = Por dia
-        $detalhe->segmento_p->data_juros_mora = $dateVencimento;
+        $detalhe->segmento_p->data_juros_mora = $dateJurosMora;
         $detalhe->segmento_p->valor_juros_mora = $boleto['juros_de_um_dia'];
 
         if ($boleto['valor_desconto'] > 0) {
