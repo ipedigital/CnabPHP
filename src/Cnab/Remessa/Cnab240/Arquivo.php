@@ -283,18 +283,9 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         $detalhe->segmento_p->uso_empresa = $boleto['numero_documento'];
         $detalhe->segmento_p->codigo_protesto = 3; // 3 = Não protestar
         $detalhe->segmento_p->prazo_protesto = 0;
-
-        if ($this->codigo_banco == \Cnab\Banco::BANCO_DO_BRASIL) {
-            // Campo não tratado pelo sistema. Informar 'zeros'.
-            // O sistema considera a informação que foi cadastrada na
-            // sua carteira junto ao Banco do Brasil.
-            $detalhe->segmento_p->codigo_baixa = 0;
-            $detalhe->segmento_p->prazo_baixa = 0;
-        }
-        else {
-            $detalhe->segmento_p->codigo_baixa = isset($boleto['codigo_baixa']) ? $boleto['codigo_baixa'] : 2; // Verifica se foi enviado informação de baixa, caso não seja, não baixar automaticamente
-            $detalhe->segmento_p->prazo_baixa = isset($boleto['prazo_baixa']) ? $boleto['prazo_baixa'] : 0; //
-        }
+    
+        $detalhe->segmento_p->codigo_baixa = 0;
+        $detalhe->segmento_p->prazo_baixa = '   ';
 
 
         $detalhe->segmento_p->codigo_ocorrencia = $boleto['codigo_ocorrencia'];
