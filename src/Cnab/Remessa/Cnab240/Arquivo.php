@@ -213,6 +213,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $detalhe->segmento_p->codigo_cedente = $this->headerArquivo->codigo_cedente;
             $detalhe->segmento_p->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
             $detalhe->segmento_p->agencia_mais_cedente_dv = $this->configuracao['agencia_mais_cedente_dv'];
+            $detalhe->segmento_p->agencia_cobradora_dv = ' ';
         }
 
         if ($this->codigo_banco == \Cnab\Banco::BRADESCO) {
