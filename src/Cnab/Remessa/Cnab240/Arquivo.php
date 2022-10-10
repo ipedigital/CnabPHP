@@ -160,7 +160,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
             $this->headerLote->codigo_convenio = '';
             $this->headerLote->codigo_cedente = $this->headerArquivo->codigo_cedente;
             $this->headerLote->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
-            $this->headerLote->agencia_mais_cedente_dv = $this->configuracao['agencia_mais_cedente_dv'];
+            $this->headerLote->agencia_mais_cedente_dv = '';
         }
 
         if ($this->codigo_banco == \Cnab\Banco::BRADESCO) {
@@ -213,7 +213,7 @@ class Arquivo implements \Cnab\Remessa\IArquivo
         if ($this->codigo_banco == \Cnab\Banco::SICOOB || $this->codigo_banco == \Cnab\Banco::BRADESCO) {
             $detalhe->segmento_p->codigo_cedente = $this->headerArquivo->codigo_cedente;
             $detalhe->segmento_p->codigo_cedente_dv = $this->configuracao['codigo_cedente_dv'];
-            $detalhe->segmento_p->agencia_mais_cedente_dv = $this->configuracao['agencia_mais_cedente_dv'];
+            $detalhe->segmento_p->agencia_mais_cedente_dv = '';
             $detalhe->segmento_p->agencia_cobradora_dv = ' ';
         }
 
