@@ -25,6 +25,34 @@ class Picture
         }
     }
 
+    /**
+     * DD-803 (CNPJ alfanumérico, IN RFB 2.229/2024): o número de inscrição com letra, num campo numérico `9(n)`.
+     *
+     * Escrito como no fork do laravel-boleto (o tipo `9A`): canônico (só [0-9A-Z], maiúsculas), alinhado à direita e
+     * completado com zeros à esquerda, como o campo numérico. Se não couber, é recusado: o arquivo não sai com o
+     * documento truncado.
+     */
+    public static function encodeDocumento($value, $format)
+    {
+        $m = array();
+        if (!preg_match(self::REGEX_VALID_FORMAT, $format, $m) || $m['tipo1'] != '9' || $m['tipo2']) {
+            throw new \InvalidArgumentException("'$format' is not a document format");
+        }
+
+        $documento = preg_replace('/[^0-9A-Z]/', '', strtoupper((string) $value));
+        $tamanho = (int) $m['tamanho1'];
+        if (strlen($documento) > $tamanho) {
+            throw new \Exception(sprintf(
+                'Documento [%s] tem %d posições e não cabe no campo de %d: o arquivo não pode ser gerado com o documento truncado',
+                $documento,
+                strlen($documento),
+                $tamanho
+            ));
+        }
+
+        return str_pad($documento, $tamanho, '0', STR_PAD_LEFT);
+    }
+
     public static function parseNumber($value)
     {
         $value = preg_replace('/[^0-9.]/', '', $value);

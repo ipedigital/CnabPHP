@@ -42,7 +42,13 @@ class Field {
 		
 		try 
 		{
-			$this->valor_encoded = Picture::encode($valor, $this->format, $this->options);	
+			// DD-803: número de inscrição com a forma do CNPJ alfanumérico (12 posições com letra e 2 dígitos). O resto
+			// segue a picture, que recusa letra como sempre: o placeholder sem dígito (XXXXXXXXXXX, FR-034) e o CNPJ
+			// incompleto, que não pode ser completado (FR-016).
+			if ($this->isNumeroInscricao() && $this->isCnpjAlfanumerico($valor))
+				$this->valor_encoded = Picture::encodeDocumento($valor, $this->format);
+			else
+				$this->valor_encoded = Picture::encode($valor, $this->format, $this->options);	
 		}
 		catch(\Exception $e)
 		{
@@ -55,6 +61,21 @@ class Field {
 			throw new \Exception("'$this->nome' have length '$len', but field need length $this->length");
 	}
 	
+	/**
+	 * DD-803: os campos de número de inscrição dos layouts (empresa, sacado e sacador) terminam todos assim.
+	 */
+	private function isNumeroInscricao()
+	{
+		return substr($this->nome, -strlen('numero_inscricao')) === 'numero_inscricao';
+	}
+
+	private function isCnpjAlfanumerico($valor)
+	{
+		$canonico = preg_replace('/[^0-9A-Z]/', '', strtoupper((string) $valor));
+
+		return preg_match('/[A-Z]/', $canonico) && preg_match('/^[0-9A-Z]{12}[0-9]{2}$/', $canonico);
+	}
+
 	public function getValue()
 	{		
 		return $this->valor_decoded;
